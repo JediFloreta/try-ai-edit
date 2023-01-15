@@ -31,12 +31,21 @@ export default async function (req, res) {
         });
         return;
     }
+    const instruct = req.body.instruct || "";
+    if (instruct.trim().length === 0) {
+        res.status(400).json({
+            error: {
+                message: "Please enter a shorter instruction",
+            },
+        });
+        return;
+    }
 
     try {
         const completion = await openai.createEdit({
             model: "text-davinci-edit-001",
             input: generatePrompt(phrase),
-            instruction: "Fix the spelling mistakes",
+            instruction: `${instruct}`,
         });
         res.status(200).json({ result: completion.data.choices[0].text });
     } catch (error) {
