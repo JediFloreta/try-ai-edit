@@ -3,18 +3,24 @@ import { useState } from "react";
 import styles from "./index.module.css";
 
 export default function Home() {
+    const [instructInput, setInstructInput] = useState("");
     const [phraseInput, setPhraseInput] = useState("");
     const [result, setResult] = useState();
 
     async function onSubmit(event) {
         event.preventDefault();
+        console.log(instructInput);
+        console.log(phraseInput);
         try {
             const response = await fetch("/api/edit_try", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ phrase: phraseInput }),
+                body: JSON.stringify({
+                    instruct: instructInput,
+                    phrase: phraseInput,
+                }),
                 // const response = await fetch("/api/generate", {
                 //   method: "POST",
                 //   headers: {
@@ -32,6 +38,7 @@ export default function Home() {
             }
 
             setResult(data.result);
+            setInstructInput("");
             setPhraseInput("");
         } catch (error) {
             // Consider implementing your own error handling logic here
@@ -52,6 +59,13 @@ export default function Home() {
                 <h3>Edit thy thought!</h3>
                 <form onSubmit={onSubmit}>
                     <input
+                        type="text"
+                        name="phrase"
+                        placeholder="Enter an instruction"
+                        value={instructInput}
+                        onChange={(e) => setInstructInput(e.target.value)}
+                    />
+                    <textarea
                         type="text"
                         name="phrase"
                         placeholder="Enter a phrase to edit"
